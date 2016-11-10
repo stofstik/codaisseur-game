@@ -21,15 +21,15 @@ class CanvasComponent extends Component {
     console.log('componentDidMount called')
     const { saveGame, game, currentUser } = this.props
 
-    const isPlayerOne = game.players[0]._id === currentUser._id
+    const isPlayerOne = game.players[0].userId === currentUser._id
 
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
-    player1 = new Player(ctx, WIDTH / 10 * 3 - WIDTH / 20)
-    player2 = new Player(ctx, WIDTH / 10 * 7 - WIDTH / 20)
+    player1 = new Player(ctx, game.pOnePos)
+    player2 = new Player(ctx, game.pTwoPos)
     this.updateCanvas();
-
+    //
     // Listen for keystrokes
     window.addEventListener('keydown', function(e) {
       if(e.key === 'a') {
@@ -38,7 +38,7 @@ class CanvasComponent extends Component {
             saveGame(game, { pOnePos: game.pOnePos -= 80 })
           }
         } else {
-          if(game.pTwoPos < 440) {
+          if(game.pTwoPos > 440) {
             saveGame(game, { pTwoPos: game.pTwoPos -= 80 })
           }
         }
@@ -55,6 +55,7 @@ class CanvasComponent extends Component {
       }
     });
 
+    this.draw()
   }
 
   componentDidUpdate(){
@@ -65,13 +66,18 @@ class CanvasComponent extends Component {
     console.log('update canvas called')
     const { game } = this.props
 
-    ctx.clearRect(0, 0, WIDTH, HEIGHT);
-    playingField.draw()
     player1.x = game.pOnePos
     player2.x = game.pTwoPos
+  }
+
+  draw(){
+    ctx.clearRect(0,0,WIDTH,HEIGHT)
+    playingField.draw()
     player1.draw()
     player2.draw()
+    window.requestAnimationFrame(this.draw.bind(this))
   }
+
   render() {
     return (
       <canvas ref="canvas" width={WIDTH} height={HEIGHT}/>

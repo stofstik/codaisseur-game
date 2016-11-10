@@ -42,7 +42,7 @@ class Game extends Component {
   canJoin() {
     if (this.isPlayer()) { return false }
     const { game } = this.props
-    return game.players.length < 4
+    return game.players.length <= 2
   }
 
   joinGame() {

@@ -20,7 +20,6 @@ class Player {
   };
 
   draw(){
-    console.log('player got drawn at ', this.x)
     this.ctx.beginPath();
     this.ctx.lineWidth = 3
     this.ctx.arc(this.x, 600 - 20, 10, 0, Math.PI * 2, true);
