@@ -9,9 +9,17 @@ class FallingStuff {
     this.y = 1
     // The amount of time it takes in milliseconds for this object to fall
     this.velocity = 1000 * getRandomInt(1, 5);
+    this.danger = false
   }
 
   animate() {
+    if(this.y > 580) {
+      this.danger = true
+    }
+
+    if(this.y > 585) {
+      this.danger = false
+    }
     if(this.y < 620){
       const timeElapsed = (new Date().getTime() - this.createdAt)
       this.y = timeElapsed * (600 / this.velocity)

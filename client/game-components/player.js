@@ -5,6 +5,11 @@ class Player {
     this.x = startPosX
     this.start = startPosX - this.step * 2
     this.end = startPosX + this.step * 2
+    this.radius = 38
+  }
+
+  hit(){
+    this.radius -= 1
   }
 
   moveLeft() {
@@ -22,7 +27,7 @@ class Player {
   draw(){
     this.ctx.beginPath();
     this.ctx.lineWidth = 3
-    this.ctx.arc(this.x, 600 - 20, 10, 0, Math.PI * 2, true);
+    this.ctx.arc(this.x, 600 - 20, this.radius, 0, Math.PI * 2, true);
     this.ctx.stroke();
   }
 }

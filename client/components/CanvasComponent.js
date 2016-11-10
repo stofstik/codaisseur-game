@@ -85,6 +85,17 @@ class CanvasComponent extends Component {
     fallingStuff.map((fs) => fs.draw())
     player1.draw()
     player2.draw()
+
+    fallingStuff.map((fs) => {
+      if(player1.x === fs.x && fs.danger) {
+        console.log('player 1 hit')
+        player1.hit()
+      }
+      if(player2.x === fs.x && fs.danger) {
+        console.log('player 2 hit')
+        player2.hit()
+      }
+    })
     window.requestAnimationFrame(this.draw.bind(this))
   }
 
