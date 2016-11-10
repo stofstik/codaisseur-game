@@ -14,10 +14,10 @@ let ctx
 let playingField
 let player1
 let player2
+let fallingStuff = []
 
 class CanvasComponent extends Component {
   componentDidMount() {
-    const that = this
     console.log('componentDidMount called')
     const { saveGame, game, currentUser } = this.props
 
@@ -55,7 +55,16 @@ class CanvasComponent extends Component {
       }
     });
 
+    this.spawner()
     this.draw()
+  }
+
+  spawner(){
+    window.setInterval(() => {
+      fallingStuff = fallingStuff.filter((fs) => fs.y < 610)
+      fallingStuff.push(new FallingStuff(ctx))
+      console.log(fallingStuff.length)
+    }, 750)
   }
 
   componentDidUpdate(){
@@ -73,6 +82,7 @@ class CanvasComponent extends Component {
   draw(){
     ctx.clearRect(0,0,WIDTH,HEIGHT)
     playingField.draw()
+    fallingStuff.map((fs) => fs.draw())
     player1.draw()
     player2.draw()
     window.requestAnimationFrame(this.draw.bind(this))
