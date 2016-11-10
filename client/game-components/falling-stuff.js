@@ -1,5 +1,7 @@
 import getRandomInt from './helpers/random-int'
 
+const colors = ['#ff0000', '#00ff00']
+
 class FallingStuff {
   constructor(ctx){
     this.ctx = ctx
@@ -10,6 +12,7 @@ class FallingStuff {
     // The amount of time it takes in milliseconds for this object to fall
     this.velocity = 1000 * getRandomInt(1, 5);
     this.danger = false
+    this.color = colors[getRandomInt(0, 2)]
   }
 
   animate() {
@@ -29,9 +32,9 @@ class FallingStuff {
   draw(){
     this.animate()
     this.ctx.beginPath()
-    this.ctx.lineWidth = 3
+    this.ctx.fillStyle = this.color
     this.ctx.arc(this.x, this.y, 5, 0, Math.PI * 2, true)
-    this.ctx.stroke()
+    this.ctx.fill()
   }
 }
 

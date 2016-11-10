@@ -5,24 +5,20 @@ class Player {
     this.x = startPosX
     this.start = startPosX - this.step * 2
     this.end = startPosX + this.step * 2
-    this.radius = 38
+    this.radius = 30
   }
 
   hit(){
-    this.radius -= 1
+    if(this.radius > 2){
+      this.radius -= 4
+    }
   }
 
-  moveLeft() {
-    if(this.x > this.start) {
-      this.x -= 400 / 5;
+  grow(){
+    if(this.radius < 38) {
+      this.radius += 4
     }
-  };
-
-  moveRight() {
-    if(this.x < this.end) {
-      this.x += 400 / 5;
-    }
-  };
+  }
 
   draw(){
     this.ctx.beginPath();

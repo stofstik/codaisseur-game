@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import saveGame from '../actions/update-game'
+import { browserHistory } from 'react-router'
+
 
 // Import game components
 import Player from '../game-components/player'
@@ -59,12 +61,13 @@ class CanvasComponent extends Component {
     this.draw()
   }
 
+  // Spawn stuff at random intervals
   spawner(){
-    window.setInterval(() => {
+    window.setTimeout(() => {
       fallingStuff = fallingStuff.filter((fs) => fs.y < 610)
       fallingStuff.push(new FallingStuff(ctx))
-      console.log(fallingStuff.length)
-    }, 750)
+      return this.spawner()
+    }, getRandomInt(50, 150))
   }
 
   componentDidUpdate(){
@@ -89,11 +92,19 @@ class CanvasComponent extends Component {
     fallingStuff.map((fs) => {
       if(player1.x === fs.x && fs.danger) {
         console.log('player 1 hit')
-        player1.hit()
+        if(fs.color === '#ff0000' ){
+          player1.hit()
+        } else {
+          player1.grow()
+        }
       }
       if(player2.x === fs.x && fs.danger) {
         console.log('player 2 hit')
-        player2.hit()
+        if(fs.color === '#ff0000' ){
+          player2.hit()
+        } else {
+          player2.grow()
+        }
       }
     })
     window.requestAnimationFrame(this.draw.bind(this))
