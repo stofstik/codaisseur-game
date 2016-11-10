@@ -6,6 +6,8 @@ class GameModel extends BaseModel {
     return {
       cards: [],
       players: [],
+      pOnePos: Number,
+      pTwoPos: Number,
       started: false,
       winner: null,
       turn: 0,

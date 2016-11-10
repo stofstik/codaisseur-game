@@ -23,6 +23,8 @@ const playerSchema = new Schema({
 const gameSchema = new Schema({
   cards: [cardSchema],
   players: [playerSchema],
+  pOnePos: Number,
+  pTwoPos: Number,
   started: { type: Boolean, required: true, 'default': false },
   winner: { type: Number, required: false },
   turn: { type: Number, required: true, 'default': 0 },
