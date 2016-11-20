@@ -36,7 +36,7 @@ class FallingStuff {
     this.animate()
     this.ctx.beginPath()
     this.ctx.fillStyle = this.color
-    this.ctx.arc(this.x, this.y, 5, 0, Math.PI * 2, true)
+    this.ctx.arc(this.x, this.y, 7, 0, Math.PI * 2, true)
     this.ctx.fill()
   }
 }

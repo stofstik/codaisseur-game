@@ -21,9 +21,6 @@ class CanvasComponent extends Component {
   componentDidMount() {
     const { updateGame, game, currentUser } = this.props
 
-    const isPlayerOne = game.players[0].userId === currentUser._id || false
-    const isPlayerTwo = game.players[1].userId === currentUser._id || false
-
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
@@ -31,20 +28,8 @@ class CanvasComponent extends Component {
     player2 = new Player(ctx, game.pTwoPos, false, game, updateGame)
     this.updateCanvas();
 
-    // Listen for keystrokes
-    window.addEventListener('keydown', function(e) {
-      if(e.key === 'a') {
-        if(isPlayerOne) player1.moveLeft()
-        if(isPlayerTwo) player2.moveLeft()
-      } else if (e.key === 'd') {
-        if(isPlayerOne) player1.moveRight()
-        if(isPlayerTwo) player2.moveRight()
-      }
-    })
-
-
     // Player one is in charge of spawning objects
-    if (isPlayerOne) {
+    if (isPlayerOne && game.players.length === 2) {
       const initialFallingStuff = []
       for(let i = 0; i < 30; i++){
         initialFallingStuff[i] = {
@@ -60,6 +45,20 @@ class CanvasComponent extends Component {
       this.spawner()
     }
     this.draw()
+
+    const isPlayerOne = game.players[0].userId === currentUser._id || false
+    const isPlayerTwo = game.players[1].userId === currentUser._id || false
+    // Listen for keystrokes
+    window.addEventListener('keydown', function(e) {
+      if(e.key === 'a') {
+        if(isPlayerOne) player1.moveLeft()
+        if(isPlayerTwo) player2.moveLeft()
+      } else if (e.key === 'd') {
+        if(isPlayerOne) player1.moveRight()
+        if(isPlayerTwo) player2.moveRight()
+      }
+    })
+
   }
 
   // Spawn stuff at random intervals
@@ -128,8 +127,14 @@ class CanvasComponent extends Component {
         }
       }
     })
-    if(player1.radius <= 4 || player2.radius <= 4) {
+    if(player1.radius <= 4) {
       console.log('game over!')
+      updateGame(game, { winner: 1 })
+      return
+    }
+    if(player2.radius <= 4) {
+      console.log('game over!')
+      updateGame(game, { winner: 0 })
       return
     }
     window.requestAnimationFrame(this.draw.bind(this))

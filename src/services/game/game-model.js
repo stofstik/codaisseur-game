@@ -17,9 +17,7 @@ const fallingStuffSchema = new Schema({
 
 const playerSchema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'user' },
-  color: { type: String, required: false },
   name: { type: String, required: true },
-  pairs: [String]
 });
 
 const gameSchema = new Schema({

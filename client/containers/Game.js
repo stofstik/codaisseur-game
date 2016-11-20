@@ -6,7 +6,7 @@ import setGameId from '../actions/set-current-game'
 import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
-import saveGame from '../actions/update-game'
+import updateGame from '../actions/update-game'
 import CanvasComponent from '../components/CanvasComponent'
 import './Game.sass'
 
@@ -16,20 +16,10 @@ import PlayingField from '../game-components/playing-field'
 import FallingStuff from '../game-components/falling-stuff'
 import getRandomInt from '../game-components/helpers/random-int'
 
-const PLAYER_COLORS = ['#0f0', '#00f']
-
 class Game extends Component {
   componentWillMount() {
     this.props.setGameId(this.props.routeParams.gameId)
     this.props.setUpGames()
-  }
-
-  startRendering(canvas) {
-    console.log('Started rendering')
-    console.log(canvas)
-    ctx = ctx || canvas.getContext('2d');
-
-    draw()
   }
 
   isPlayer() {
@@ -45,11 +35,10 @@ class Game extends Component {
   }
 
   joinGame() {
-    const { game, saveGame, currentUser } = this.props
-    saveGame(game, { players: game.players.concat({
+    const { game, updateGame, currentUser } = this.props
+    updateGame(game, { players: game.players.concat({
       userId: currentUser._id,
       name: currentUser.name,
-      color: PLAYER_COLORS[game.players.length],
     })})
   }
 
@@ -68,16 +57,18 @@ class Game extends Component {
       )
     }
 
-    return(
+    return (
       <div className="game">
-        <p>Is player: { this.isPlayer() ? 'Yes' : 'No' }</p>
-        <p>Can join: { this.canJoin() ? 'Yes' : 'No' }</p>
-        { game.players.map((player) => player.name) }
-        <div>
-          <Paper style={{width: 800, height: 600, margin: 0}} zDepth={5}>
-            <CanvasComponent />
-          </Paper>
+        <div className="header">
+          {
+            game.players.map((p) => {
+              return <span>{p.name}</span>
+            })
+          }
         </div>
+        <Paper style={{width: 800, height: 600, margin: 0}} zDepth={2}>
+          <CanvasComponent />
+        </Paper>
       </div>
     )
   }
@@ -97,13 +88,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-const draw = function() {
-  ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
-  playingField.draw()
-  player1.draw()
-  fallingStuff.map((fs) => fs.draw())
-}
-
-
-export default connect(mapStateToProps, { setUpGames, setGameId, saveGame })(Game)
+export default connect(mapStateToProps, { setUpGames, setGameId, updateGame })(Game)
