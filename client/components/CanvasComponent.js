@@ -1,8 +1,7 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import saveGame from '../actions/update-game'
+import updateGame from '../actions/update-game'
 import { browserHistory } from 'react-router'
-
 
 // Import game components
 import Player from '../game-components/player'
@@ -21,9 +20,10 @@ let fallingStuff = []
 class CanvasComponent extends Component {
   componentDidMount() {
     console.log('componentDidMount called')
-    const { saveGame, game, currentUser } = this.props
+    const { updateGame, game, currentUser } = this.props
 
-    const isPlayerOne = game.players[0].userId === currentUser._id
+    const isPlayerOne = game.players[0].userId === currentUser._id || false
+    const isPlayerTwo = game.players[1].userId === currentUser._id || false
 
     ctx = this.refs.canvas.getContext('2d');
     // init objects
@@ -31,27 +31,29 @@ class CanvasComponent extends Component {
     player1 = new Player(ctx, game.pOnePos)
     player2 = new Player(ctx, game.pTwoPos)
     this.updateCanvas();
-    //
+
     // Listen for keystrokes
     window.addEventListener('keydown', function(e) {
       if(e.key === 'a') {
         if(isPlayerOne) {
           if(game.pOnePos > 40) {
-            saveGame(game, { pOnePos: game.pOnePos -= 80 })
+            updateGame(game, { pOnePos: game.pOnePos -= 80 })
           }
-        } else {
+        }
+        if(isPlayerTwo) {
           if(game.pTwoPos > 440) {
-            saveGame(game, { pTwoPos: game.pTwoPos -= 80 })
+            updateGame(game, { pTwoPos: game.pTwoPos -= 80 })
           }
         }
       } else if (e.key === 'd') {
         if(isPlayerOne) {
           if(game.pOnePos < 360) {
-            saveGame(game, { pOnePos: game.pOnePos += 80 })
+            updateGame(game, { pOnePos: game.pOnePos += 80 })
           }
-        } else {
+        }
+        if(isPlayerTwo) {
           if(game.pTwoPos < 760) {
-            saveGame(game, { pTwoPos: game.pTwoPos += 80 })
+            updateGame(game, { pTwoPos: game.pTwoPos += 80 })
           }
         }
       }
@@ -67,7 +69,7 @@ class CanvasComponent extends Component {
       fallingStuff = fallingStuff.filter((fs) => fs.y < 610)
       fallingStuff.push(new FallingStuff(ctx))
       return this.spawner()
-    }, getRandomInt(50, 150))
+    }, getRandomInt(500, 1500))
   }
 
   componentDidUpdate(){
@@ -126,4 +128,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, {saveGame})(CanvasComponent)
+export default connect(mapStateToProps, {updateGame})(CanvasComponent)
