@@ -18,7 +18,6 @@ let player2
 
 class CanvasComponent extends Component {
   componentDidMount() {
-    console.log('componentDidMount called')
     const { updateGame, game, currentUser } = this.props
 
     const isPlayerOne = game.players[0].userId === currentUser._id || false
@@ -27,8 +26,8 @@ class CanvasComponent extends Component {
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
-    player1 = new Player(ctx, game.pOnePos, isPlayerOne, game, updateGame)
-    player2 = new Player(ctx, game.pTwoPos, isPlayerOne, game, updateGame)
+    player1 = new Player(ctx, game.pOnePos, true, game, updateGame)
+    player2 = new Player(ctx, game.pTwoPos, false, game, updateGame)
     this.updateCanvas();
 
     // Listen for keystrokes
@@ -42,19 +41,88 @@ class CanvasComponent extends Component {
       }
     })
 
+    updateGame(game, {
+      fallingStuff: [{
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, {
+        createdAt: new Date().getTime(),
+        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+        velocity: getRandomInt(500, 5000),
+        color: getRandomInt(0, 2)
+      }, ]
+    })
+
     // Player one is in charge of spawning objects
     if (isPlayerOne) {
+
       this.spawner()
     }
     this.draw()
   }
 
   // Spawn stuff at random intervals
-  spawner(){
+  spawner() {
     window.setTimeout(() => {
-      const { updateGame, game } = this.props
-      const fs = {createdAt: new Date().getTime(), x: 200, velocity: 5000}
-      updateGame(game, { fallingStuff: game.fallingStuff.concat([fs]) } );
+      const {
+        updateGame,
+        game
+      } = this.props
+      updateGame(game, {
+        fallingStuff: game.fallingStuff.map((f) => {
+          const nfs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
+          nfs.animate()
+          if (nfs.y < 610) return f
+          return {
+            createdAt: new Date().getTime(),
+            x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+            velocity: getRandomInt(750, 5000),
+            color: getRandomInt(0, 2)
+          }
+        })
+      });
       return this.spawner()
     }, getRandomInt(500, 1500))
   }
@@ -64,39 +132,41 @@ class CanvasComponent extends Component {
   }
 
   updateCanvas() {
-    console.log('update canvas called')
     const { game } = this.props
 
     player1.x = game.pOnePos
     player2.x = game.pTwoPos
+    player1.radius = game.pOneSize
+    player2.radius = game.pTwoSize
   }
 
   draw(){
-    const { game } = this.props
+    const { game, currentUser } = this.props
     ctx.clearRect(0,0,WIDTH,HEIGHT)
     playingField.draw()
     player1.draw()
     player2.draw()
+    const isPlayerOne = game.players[0].userId === currentUser._id || false
     const fallingStuff = game.fallingStuff.map((fs) => {
-      return new FallingStuff(ctx, fs.createdAt, fs.x, fs.velocity)
+      return new FallingStuff(ctx, fs.createdAt, fs.x, fs.velocity, fs.color)
     })
     fallingStuff.map((fs) => {
       fs.draw()
       // Player one is in charge of collision detection. Sorry p2...
-      if(player1.x === fs.x && fs.hitZone) {
-        console.log('player 1 hit')
-        if(fs.color === '#ff0000' ){
-          player1.hit()
-        } else {
-          player1.grow()
+      if(isPlayerOne) {
+        if(game.pOnePos === fs.x && fs.hitZone) {
+          if(fs.color === '#ff0000' ){
+            player1.hit()
+          } else {
+            player1.grow()
+          }
         }
-      }
-      if(player2.x === fs.x && fs.hitZone) {
-        console.log('player 2 hit')
-        if(fs.color === '#ff0000' ){
-          player2.hit()
-        } else {
-          player2.grow()
+        if(game.pTwoPos === fs.x && fs.hitZone) {
+          if(fs.color === '#ff0000' ){
+            player2.hit()
+          } else {
+            player2.grow()
+          }
         }
       }
     })

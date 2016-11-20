@@ -12,6 +12,7 @@ const fallingStuffSchema = new Schema({
   x: { type: Number, required: true },
   createdAt: { type: Number, required: true },
   velocity: { type: Number, required: true },
+  color: { type: Number, required: true },
 });
 
 const playerSchema = new Schema({

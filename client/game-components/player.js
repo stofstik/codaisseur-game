@@ -5,6 +5,9 @@ class Player {
     this.x = startPosX
     this.start = startPosX - this.step * 2
     this.end = startPosX + this.step * 2
+    this.radius = 20
+    this.justHit = false
+    this.justGrown = false
 
     this.isPlayerOne = isPlayerOne
     this.game = game
@@ -36,6 +39,7 @@ class Player {
   }
 
   hit(){
+    if(this.justHit) return
     if(this.isPlayerOne) {
       if(this.game.pOneSize > 2){
         this.updateGame(this.game, { pOneSize: this.game.pOneSize -= 4 })
@@ -45,9 +49,14 @@ class Player {
         this.updateGame(this.game, { pTwoSize: this.game.pTwoSize -= 4 })
       }
     }
+    this.justHit = true
+    window.setTimeout(() => {
+      this.justHit = false
+    }, 200)
   }
 
   grow(){
+    if(this.justGrown) return
     if(this.isPlayerOne) {
       if(this.game.pOneSize < 38){
         this.updateGame(this.game, { pOneSize: this.game.pOneSize += 4 })
@@ -57,16 +66,16 @@ class Player {
         this.updateGame(this.game, { pTwoSize: this.game.pTwoSize += 4 })
       }
     }
+    this.justGrown = true
+    window.setTimeout(() => {
+      this.justGrown = false
+    }, 200)
   }
 
   draw(){
     this.ctx.beginPath();
     this.ctx.lineWidth = 3
-    if(this.isPlayerOne) {
-      this.ctx.arc(this.x, 600 - 20, this.game.pOneSize, 0, Math.PI * 2, true);
-    } else {
-      this.ctx.arc(this.x, 600 - 20, this.game.pTwoSize, 0, Math.PI * 2, true);
-    }
+    this.ctx.arc(this.x, 600 - 20, this.radius, 0, Math.PI * 2, true);
     this.ctx.stroke();
   }
 }
