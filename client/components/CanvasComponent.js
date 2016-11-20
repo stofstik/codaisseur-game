@@ -21,6 +21,9 @@ class CanvasComponent extends Component {
   componentDidMount() {
     const { updateGame, game, currentUser } = this.props
 
+    const isPlayerOne = game.players[0].userId === currentUser._id || false
+    const isPlayerTwo = game.players[1] ? game.players[1].userId === currentUser._id || false : false
+
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
@@ -29,13 +32,13 @@ class CanvasComponent extends Component {
     this.updateCanvas();
 
     // Player one is in charge of spawning objects
-    if (isPlayerOne && game.players.length === 2) {
+    if (isPlayerOne && game.players.length > 1) {
       const initialFallingStuff = []
       for(let i = 0; i < 30; i++){
         initialFallingStuff[i] = {
           createdAt: new Date().getTime(),
           x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-          velocity: getRandomInt(500, 5000),
+          velocity: getRandomInt(750, 5000),
           color: getRandomInt(0, 8)
         }
       }
@@ -43,11 +46,9 @@ class CanvasComponent extends Component {
         fallingStuff: initialFallingStuff
       })
       this.spawner()
+      this.draw()
     }
-    this.draw()
 
-    const isPlayerOne = game.players[0].userId === currentUser._id || false
-    const isPlayerTwo = game.players[1].userId === currentUser._id || false
     // Listen for keystrokes
     window.addEventListener('keydown', function(e) {
       if(e.key === 'a') {
@@ -59,6 +60,7 @@ class CanvasComponent extends Component {
       }
     })
 
+    this.draw()
   }
 
   // Spawn stuff at random intervals
@@ -82,7 +84,7 @@ class CanvasComponent extends Component {
         })
       });
       return this.spawner()
-    }, getRandomInt(500, 1500))
+    }, getRandomInt(500, 1000))
   }
 
   componentDidUpdate(){

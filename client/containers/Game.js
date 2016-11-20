@@ -10,12 +10,6 @@ import updateGame from '../actions/update-game'
 import CanvasComponent from '../components/CanvasComponent'
 import './Game.sass'
 
-// Import game components
-import Player from '../game-components/player'
-import PlayingField from '../game-components/playing-field'
-import FallingStuff from '../game-components/falling-stuff'
-import getRandomInt from '../game-components/helpers/random-int'
-
 class Game extends Component {
   componentWillMount() {
     this.props.setGameId(this.props.routeParams.gameId)
@@ -61,8 +55,8 @@ class Game extends Component {
       <div className="game">
         <div className="header">
           {
-            game.players.map((p) => {
-              return <span>{p.name}</span>
+            game.players.map((p, i) => {
+              return <span key={i} >{p.name.toUpperCase()}</span>
             })
           }
         </div>
