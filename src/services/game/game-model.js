@@ -8,9 +8,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const cardSchema = new Schema({
-  symbol: { type: String, required: true },
-  flipped: { type: Boolean, required: true, 'default': false },
+const fallingStuffSchema = new Schema({
+  x: { type: Number, required: true },
+  createdAt: { type: Number, required: true },
+  velocity: { type: Number, required: true },
 });
 
 const playerSchema = new Schema({
@@ -21,17 +22,17 @@ const playerSchema = new Schema({
 });
 
 const gameSchema = new Schema({
-  cards: [cardSchema],
+  fallingStuff: [fallingStuffSchema],
   players: [playerSchema],
   pOnePos: { type: Number, required: true, 'default': 200 },
+  pOneSize: { type: Number, required: true, 'default': 20 },
   pTwoPos: { type: Number, required: true, 'default': 600 },
+  pTwoSize: { type: Number, required: true, 'default': 20 },
   started: { type: Boolean, required: true, 'default': false },
   winner: { type: Number, required: false },
-  turn: { type: Number, required: true, 'default': 0 },
   createdAt: { type: Date, 'default': Date.now },
   updatedAt: { type: Date, 'default': Date.now },
   userId: { type: Schema.Types.ObjectId, ref: 'user' },
-  draw: { type: Boolean, required: false }
 });
 
 const gameModel = mongoose.model('game', gameSchema);

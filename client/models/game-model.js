@@ -4,16 +4,16 @@ import feathers from 'feathers-client'
 class GameModel extends BaseModel {
   defaults() {
     return {
-      cards: [],
       players: [],
+      fallingStuff: [],
       pOnePos: 200,
+      pOneSize: 20,
       pTwoPos: 600,
+      pTwoSize: 20,
       started: false,
       winner: null,
-      turn: 0,
       createdAt: Date.now,
       updatedAt: Date.now,
-      draw: false,
     };
   }
 

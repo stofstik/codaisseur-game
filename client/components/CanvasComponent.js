@@ -15,7 +15,6 @@ let ctx
 let playingField
 let player1
 let player2
-let fallingStuff = []
 
 class CanvasComponent extends Component {
   componentDidMount() {
@@ -28,46 +27,34 @@ class CanvasComponent extends Component {
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
-    player1 = new Player(ctx, game.pOnePos)
-    player2 = new Player(ctx, game.pTwoPos)
+    player1 = new Player(ctx, game.pOnePos, isPlayerOne, game, updateGame)
+    player2 = new Player(ctx, game.pTwoPos, isPlayerOne, game, updateGame)
     this.updateCanvas();
 
     // Listen for keystrokes
     window.addEventListener('keydown', function(e) {
       if(e.key === 'a') {
-        if(isPlayerOne) {
-          if(game.pOnePos > 40) {
-            updateGame(game, { pOnePos: game.pOnePos -= 80 })
-          }
-        }
-        if(isPlayerTwo) {
-          if(game.pTwoPos > 440) {
-            updateGame(game, { pTwoPos: game.pTwoPos -= 80 })
-          }
-        }
+        if(isPlayerOne) player1.moveLeft()
+        if(isPlayerTwo) player2.moveLeft()
       } else if (e.key === 'd') {
-        if(isPlayerOne) {
-          if(game.pOnePos < 360) {
-            updateGame(game, { pOnePos: game.pOnePos += 80 })
-          }
-        }
-        if(isPlayerTwo) {
-          if(game.pTwoPos < 760) {
-            updateGame(game, { pTwoPos: game.pTwoPos += 80 })
-          }
-        }
+        if(isPlayerOne) player1.moveRight()
+        if(isPlayerTwo) player2.moveRight()
       }
-    });
+    })
 
-    this.spawner()
+    // Player one is in charge of spawning objects
+    if (isPlayerOne) {
+      this.spawner()
+    }
     this.draw()
   }
 
   // Spawn stuff at random intervals
   spawner(){
     window.setTimeout(() => {
-      fallingStuff = fallingStuff.filter((fs) => fs.y < 610)
-      fallingStuff.push(new FallingStuff(ctx))
+      const { updateGame, game } = this.props
+      const fs = {createdAt: new Date().getTime(), x: 200, velocity: 5000}
+      updateGame(game, { fallingStuff: game.fallingStuff.concat([fs]) } );
       return this.spawner()
     }, getRandomInt(500, 1500))
   }
@@ -85,14 +72,18 @@ class CanvasComponent extends Component {
   }
 
   draw(){
+    const { game } = this.props
     ctx.clearRect(0,0,WIDTH,HEIGHT)
     playingField.draw()
-    fallingStuff.map((fs) => fs.draw())
     player1.draw()
     player2.draw()
-
+    const fallingStuff = game.fallingStuff.map((fs) => {
+      return new FallingStuff(ctx, fs.createdAt, fs.x, fs.velocity)
+    })
     fallingStuff.map((fs) => {
-      if(player1.x === fs.x && fs.danger) {
+      fs.draw()
+      // Player one is in charge of collision detection. Sorry p2...
+      if(player1.x === fs.x && fs.hitZone) {
         console.log('player 1 hit')
         if(fs.color === '#ff0000' ){
           player1.hit()
@@ -100,7 +91,7 @@ class CanvasComponent extends Component {
           player1.grow()
         }
       }
-      if(player2.x === fs.x && fs.danger) {
+      if(player2.x === fs.x && fs.hitZone) {
         console.log('player 2 hit')
         if(fs.color === '#ff0000' ){
           player2.hit()

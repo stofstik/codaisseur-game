@@ -29,7 +29,6 @@ class Game extends Component {
     console.log(canvas)
     ctx = ctx || canvas.getContext('2d');
 
-
     draw()
   }
 

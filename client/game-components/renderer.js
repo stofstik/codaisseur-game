@@ -35,10 +35,6 @@ const garbageCollector = function() {
 
 const spawner = function() {
   window.setTimeout(() => {
-    fallingStuff = fallingStuff.filter((fs) => {
-      return fs.y < 610
-    })
-    fallingStuff.push(new FallingStuff(ctx))
     return spawner()
   }, getRandomInt(10,500))
 }
