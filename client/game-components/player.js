@@ -41,11 +41,11 @@ class Player {
   hit(){
     if(this.justHit) return
     if(this.isPlayerOne) {
-      if(this.game.pOneSize > 2){
+      if(this.game.pOneSize > 4){
         this.updateGame(this.game, { pOneSize: this.game.pOneSize -= 4 })
       }
     } else {
-      if(this.game.pTwoSize > 2){
+      if(this.game.pTwoSize > 4){
         this.updateGame(this.game, { pTwoSize: this.game.pTwoSize -= 4 })
       }
     }

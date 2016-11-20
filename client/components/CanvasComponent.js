@@ -15,6 +15,7 @@ let ctx
 let playingField
 let player1
 let player2
+let gameOver = false
 
 class CanvasComponent extends Component {
   componentDidMount() {
@@ -41,63 +42,21 @@ class CanvasComponent extends Component {
       }
     })
 
-    updateGame(game, {
-      fallingStuff: [{
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, {
-        createdAt: new Date().getTime(),
-        x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-        velocity: getRandomInt(500, 5000),
-        color: getRandomInt(0, 2)
-      }, ]
-    })
 
     // Player one is in charge of spawning objects
     if (isPlayerOne) {
-
+      const initialFallingStuff = []
+      for(let i = 0; i < 30; i++){
+        initialFallingStuff[i] = {
+          createdAt: new Date().getTime(),
+          x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
+          velocity: getRandomInt(500, 5000),
+          color: getRandomInt(0, 8)
+        }
+      }
+      updateGame(game, {
+        fallingStuff: initialFallingStuff
+      })
       this.spawner()
     }
     this.draw()
@@ -114,12 +73,12 @@ class CanvasComponent extends Component {
         fallingStuff: game.fallingStuff.map((f) => {
           const nfs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
           nfs.animate()
-          if (nfs.y < 610) return f
+          if (nfs.y < 600 + getRandomInt(10, 100)) return f
           return {
             createdAt: new Date().getTime(),
             x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
             velocity: getRandomInt(750, 5000),
-            color: getRandomInt(0, 2)
+            color: getRandomInt(0, 8)
           }
         })
       });
@@ -138,6 +97,7 @@ class CanvasComponent extends Component {
     player2.x = game.pTwoPos
     player1.radius = game.pOneSize
     player2.radius = game.pTwoSize
+
   }
 
   draw(){
@@ -147,10 +107,8 @@ class CanvasComponent extends Component {
     player1.draw()
     player2.draw()
     const isPlayerOne = game.players[0].userId === currentUser._id || false
-    const fallingStuff = game.fallingStuff.map((fs) => {
-      return new FallingStuff(ctx, fs.createdAt, fs.x, fs.velocity, fs.color)
-    })
-    fallingStuff.map((fs) => {
+    game.fallingStuff.map((f) => {
+      const fs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
       fs.draw()
       // Player one is in charge of collision detection. Sorry p2...
       if(isPlayerOne) {
@@ -170,6 +128,10 @@ class CanvasComponent extends Component {
         }
       }
     })
+    if(player1.radius <= 4 || player2.radius <= 4) {
+      console.log('game over!')
+      return
+    }
     window.requestAnimationFrame(this.draw.bind(this))
   }
 

@@ -1,16 +1,14 @@
 import getRandomInt from './helpers/random-int'
 
-const colors = ['#ff0000', '#00ff00']
+const colors = ['#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#ff0000', '#00ff00']
 
 class FallingStuff {
   constructor(ctx, createdAt, x, velocity, color) {
     this.ctx = ctx
     this.createdAt = createdAt
-    // this.x = (800 / 10) * getRandomInt(1, 11) - 800 / 20
     this.x = x
     this.y = 1
     // The amount of time it takes in milliseconds for this object to fall
-    // this.velocity = getRandomInt(1000, 5000);
     this.velocity = velocity
     this.hitZone = false
     this.color = colors[color]
