@@ -15,7 +15,6 @@ let ctx
 let playingField
 let player1
 let player2
-let gameOver = false
 
 class CanvasComponent extends Component {
   componentDidMount() {
@@ -36,8 +35,8 @@ class CanvasComponent extends Component {
       for(let i = 0; i < 10; i++){
         initialFallingStuff[i] = {
           createdAt: new Date().getTime(),
-          x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-          velocity: getRandomInt(1000, 5000),
+          x: (WIDTH / 10) * getRandomInt(1, 11) - WIDTH / 20,
+          velocity: getRandomInt(1500, 5000),
           color: getRandomInt(0, 8)
         }
       }
@@ -49,7 +48,7 @@ class CanvasComponent extends Component {
     }
 
     // Listen for keystrokes
-    window.addEventListener('keyup', function(e) {
+    window.addEventListener('keyup', (e) => {
       e.preventDefault()
       if(e.key === 'a') {
         if(isPlayerOne) player1.moveLeft()
@@ -71,29 +70,27 @@ class CanvasComponent extends Component {
         fallingStuff: game.fallingStuff.map((f) => {
           const nfs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
           nfs.animate()
-          if (nfs.y < 600 + getRandomInt(10, 100)) return f
+          if (nfs.y < HEIGHT) return f
           return {
             createdAt: new Date().getTime(),
-            x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-            velocity: getRandomInt(1000, 5000),
+            x: (WIDTH / 10) * getRandomInt(1, 11) - WIDTH / 20,
+            velocity: getRandomInt(1500, 5000),
             color: getRandomInt(0, 8)
           }
         })
       });
       // Stop spawning if we have a winner or if we are not in current game
-      if(game.winner > -1 && game._id !== currentGame) return
+      if(game.winner > -1 || game._id !== currentGame) return
       return this.spawner()
-    }, getRandomInt(1000, 1000))
+    }, getRandomInt(500, 1000))
   }
 
   draw() {
     const { game, currentUser, updateGame } = this.props
     ctx.clearRect(0, 0, WIDTH, HEIGHT)
     playingField.draw()
-    if(game.winner === -1) {
-      player1.game = game
-      player2.game = game
-    }
+    player1.game = game
+    player2.game = game
     player1.draw()
     player2.draw()
     // Player one is in charge of collision detection. Sorry p2...
@@ -107,7 +104,7 @@ class CanvasComponent extends Component {
             player1.hit()
           }
           if (fs.color === '#00ff00') {
-            player1.hit()
+            player1.grow()
           }
         }
         if (game.pTwoPos === fs.x && fs.hitZone) {
@@ -115,7 +112,7 @@ class CanvasComponent extends Component {
             player2.hit()
           }
           if (fs.color === '#00ff00') {
-            player2.hit()
+            player2.grow()
           }
         }
       }
@@ -139,9 +136,9 @@ class CanvasComponent extends Component {
       position: 'absolute',
       display: 'flex',
       justifyContent: 'center',
-      width: '800px',
-      height: '600px',
-      fontSize: 80,
+      width: WIDTH,
+      height: HEIGHT,
+      fontSize: 60,
     }
     if(!game) return null
     if(game.winner < 0) return null
