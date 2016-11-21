@@ -1,6 +1,6 @@
 {
   "host": "falling-stuff.codaisseur.cloud",
-  "port": 80,
+  "port": 5000,
   "mongodb": "MONGODB_URL",
   "public": "../static/",
   "auth": {
