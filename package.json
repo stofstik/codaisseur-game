@@ -1,7 +1,7 @@
 {
-  "name": "MemoryGame",
-  "description": "Multiplayer Memory Game with React and FeathersJS.",
-  "version": "0.0.0",
+  "name": "FallingStuff",
+  "description": "Falling stuff man, what is there to describe?",
+  "version": "0.1.0",
   "homepage": "",
   "main": "src/",
   "keywords": [
