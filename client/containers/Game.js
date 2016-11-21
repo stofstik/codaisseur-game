@@ -17,8 +17,15 @@ class Game extends Component {
   }
 
   componentDidUpdate() {
-    console.log('updated')
-
+    const { game, updateGame, currentUser} = this.props
+    const isPlayerOne = game.players[0] ? game.players[0].userId === currentUser._id || false : false
+    if(!game.started && game.players.length >= 2 && game.startsIn > 0 && isPlayerOne) {
+      window.setTimeout(() => {
+        updateGame(game, {
+          startsIn: game.startsIn -= 1
+        })
+      }, 1000)
+    }
   }
 
   isPlayer() {
@@ -69,19 +76,27 @@ class Game extends Component {
       )
     }
 
-    return (
-      <div className="game">
-        <div className="header">
-          {
-            game.players.map((p, i) => {
-              return <span key={i} >{p.name.toUpperCase()}</span>
-            })
-          }
+    if(game.startsIn === 0) {
+      return (
+        <div className="game">
+          <div className="header">
+            {
+              game.players.map((p, i) => {
+                return <span key={i} >{p.name.toUpperCase()}</span>
+              })
+            }
+          </div>
+          <Paper style={{width: 800, height: 600, margin: 0}} zDepth={2}>
+            <CanvasComponent />
+          </Paper>
         </div>
-        <Paper style={{width: 800, height: 600, margin: 0}} zDepth={2}>
-          <CanvasComponent />
-        </Paper>
-      </div>
+      )
+    }
+
+    return (
+      <span>
+        { game.startsIn }
+      </span>
     )
   }
 }
