@@ -23,9 +23,10 @@ class Lobby extends Component {
           { games.map((game) => {
             return <ListItem key={ game._id }
               primaryText={ `${ game.createdBy.name }'s Game` }
+              style={{width: 400}}
               leftAvatar={<Avatar src={ game.createdBy.avatar }/> }
               rightIcon={
-                <Link to={ `/game/${game._id}` }>
+                <Link style={{marginRight: 80, marginTop: 7}} to={ `/game/${game._id}` }>
                   <RaisedButton label="Join" />
                 </Link>
               } />

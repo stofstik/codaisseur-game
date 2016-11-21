@@ -9,6 +9,8 @@ import PlayingField from '../game-components/playing-field'
 import FallingStuff from '../game-components/falling-stuff'
 import getRandomInt from '../game-components/helpers/random-int'
 
+import './CanvasComponent.sass'
+
 const WIDTH = 800
 const HEIGHT = 600
 let ctx
@@ -30,9 +32,9 @@ class CanvasComponent extends Component {
     player2 = new Player(ctx, false, game, updateGame)
 
     // Player one is in charge of spawning objects
-    if (isPlayerOne && game.players.length > 1) {
+    if (isPlayerOne && game.players.length > 1 && game.winner === -1) {
       const initialFallingStuff = []
-      for(let i = 0; i < 10; i++){
+      for(let i = 0; i < 30; i++){
         initialFallingStuff[i] = {
           createdAt: new Date().getTime(),
           x: (WIDTH / 10) * getRandomInt(1, 11) - WIDTH / 20,
@@ -132,20 +134,12 @@ class CanvasComponent extends Component {
 
   renderWinner() {
     const { game } = this.props
-    const style = {
-      position: 'absolute',
-      display: 'flex',
-      justifyContent: 'center',
-      width: WIDTH,
-      height: HEIGHT,
-      fontSize: 60,
-    }
     if(!game) return null
     if(game.winner < 0) return null
     if(game.players.length !== 2) return null
     return (
-      <div style={style}>
-        <h1 style={{textAlign: 'center'}}>{ game.players[game.winner].name.toUpperCase() } WINS!</h1>
+      <div className="winner-wrapper">
+        <h1>{ game.players[game.winner].name.toUpperCase() } WINS!</h1>
       </div>
     )
   }
