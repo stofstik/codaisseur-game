@@ -16,6 +16,11 @@ class Game extends Component {
     this.props.setUpGames()
   }
 
+  componentDidUpdate() {
+    console.log('updated')
+
+  }
+
   isPlayer() {
     const { game, currentUser } = this.props
     return game.players.filter((player) =>
@@ -48,6 +53,19 @@ class Game extends Component {
           <RaisedButton label="Join" primary={true} onClick={ this.joinGame.bind(this) } />
           <Link to="/"><FlatButton label="Back to the Lobby" /></Link>
         </Paper>
+      )
+    }
+
+    if(game.players.length < 2) {
+      return (
+        <div className="game">
+          <div className="header">
+            <span>{ game.players[0].name.toUpperCase() }</span>
+            <span>Waiting for P2</span>
+          </div>
+          <Paper style={{width: 800, height: 600, margin: 0}} zDepth={2}>
+          </Paper>
+        </div>
       )
     }
 

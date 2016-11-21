@@ -11,7 +11,7 @@ class GameModel extends BaseModel {
       pTwoPos: 600,
       pTwoSize: 20,
       started: false,
-      winner: null,
+      winner: -1,
       createdAt: Date.now,
       updatedAt: Date.now,
     };

@@ -66,10 +66,7 @@ class CanvasComponent extends Component {
   // Spawn stuff at random intervals
   spawner() {
     window.setTimeout(() => {
-      const {
-        updateGame,
-        game
-      } = this.props
+      const { updateGame, game } = this.props
       updateGame(game, {
         fallingStuff: game.fallingStuff.map((f) => {
           const nfs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
@@ -83,6 +80,9 @@ class CanvasComponent extends Component {
           }
         })
       });
+      // Stop spawning if we have a winner
+      console.log(game)
+      if(game.winner > -1) return
       return this.spawner()
     }, getRandomInt(500, 1000))
   }
@@ -102,7 +102,7 @@ class CanvasComponent extends Component {
   }
 
   draw(){
-    const { game, currentUser } = this.props
+    const { game, currentUser, updateGame } = this.props
     ctx.clearRect(0,0,WIDTH,HEIGHT)
     playingField.draw()
     player1.draw()
