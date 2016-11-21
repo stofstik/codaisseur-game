@@ -29,6 +29,7 @@ const gameSchema = new Schema({
   pTwoSize: { type: Number, required: true, 'default': 20 },
   started: { type: Boolean, required: true, 'default': false },
   winner: { type: Number, required: true, 'default': -1 },
+  startsIn: { type: Number, required: true, 'default': 3 },
   createdAt: { type: Date, 'default': Date.now },
   updatedAt: { type: Date, 'default': Date.now },
   userId: { type: Schema.Types.ObjectId, ref: 'user' },

@@ -18,14 +18,15 @@ class Game extends Component {
 
   componentDidUpdate() {
     const { game, updateGame, currentUser} = this.props
-    const isPlayerOne = game.players[0] ? game.players[0].userId === currentUser._id || false : false
-    if(!game.started && game.players.length >= 2 && game.startsIn > 0 && isPlayerOne) {
-      window.setTimeout(() => {
-        updateGame(game, {
-          startsIn: game.startsIn -= 1
-        })
-      }, 1000)
-    }
+    if(game.started) return
+    if(game.players.length <= 1) return
+    if(game.startsIn === 0) return
+    if(game.players[1].userId === currentUser._id) return
+    window.setTimeout(() => {
+      updateGame(game, {
+        startsIn: game.startsIn -= 1
+      })
+    }, 1000)
   }
 
   isPlayer() {
@@ -94,9 +95,11 @@ class Game extends Component {
     }
 
     return (
-      <span>
-        { game.startsIn }
-      </span>
+      <Paper className="count-down" style={{width: 800, height: 600, margin: 0}} zDepth={2}>
+        <h1 className="huge-number">
+          { game.startsIn }
+        </h1>
+      </Paper>
     )
   }
 }

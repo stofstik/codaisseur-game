@@ -27,30 +27,30 @@ class CanvasComponent extends Component {
     ctx = this.refs.canvas.getContext('2d');
     // init objects
     playingField = new PlayingField(ctx)
-    player1 = new Player(ctx, game.pOnePos, true, game, updateGame)
-    player2 = new Player(ctx, game.pTwoPos, false, game, updateGame)
-    this.updateCanvas();
+    player1 = new Player(ctx, true, game, updateGame)
+    player2 = new Player(ctx, false, game, updateGame)
 
     // Player one is in charge of spawning objects
     if (isPlayerOne && game.players.length > 1) {
       const initialFallingStuff = []
-      for(let i = 0; i < 30; i++){
+      for(let i = 0; i < 10; i++){
         initialFallingStuff[i] = {
           createdAt: new Date().getTime(),
           x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-          velocity: getRandomInt(750, 5000),
+          velocity: getRandomInt(1000, 5000),
           color: getRandomInt(0, 8)
         }
       }
       updateGame(game, {
+        started: true,
         fallingStuff: initialFallingStuff
       })
       this.spawner()
-      this.draw()
     }
 
     // Listen for keystrokes
-    window.addEventListener('keydown', function(e) {
+    window.addEventListener('keyup', function(e) {
+      e.preventDefault()
       if(e.key === 'a') {
         if(isPlayerOne) player1.moveLeft()
         if(isPlayerTwo) player2.moveLeft()
@@ -66,7 +66,7 @@ class CanvasComponent extends Component {
   // Spawn stuff at random intervals
   spawner() {
     window.setTimeout(() => {
-      const { updateGame, game } = this.props
+      const { updateGame, game, currentGame } = this.props
       updateGame(game, {
         fallingStuff: game.fallingStuff.map((f) => {
           const nfs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
@@ -75,66 +75,57 @@ class CanvasComponent extends Component {
           return {
             createdAt: new Date().getTime(),
             x: (800 / 10) * getRandomInt(1, 11) - 800 / 20,
-            velocity: getRandomInt(750, 5000),
+            velocity: getRandomInt(1000, 5000),
             color: getRandomInt(0, 8)
           }
         })
       });
-      // Stop spawning if we have a winner
-      console.log(game)
-      if(game.winner > -1) return
+      // Stop spawning if we have a winner or if we are not in current game
+      if(game.winner > -1 && game._id !== currentGame) return
       return this.spawner()
-    }, getRandomInt(500, 1000))
+    }, getRandomInt(1000, 1000))
   }
 
-  componentDidUpdate(){
-    this.updateCanvas()
-  }
-
-  updateCanvas() {
-    const { game } = this.props
-
-    player1.x = game.pOnePos
-    player2.x = game.pTwoPos
-    player1.radius = game.pOneSize
-    player2.radius = game.pTwoSize
-
-  }
-
-  draw(){
+  draw() {
     const { game, currentUser, updateGame } = this.props
-    ctx.clearRect(0,0,WIDTH,HEIGHT)
+    ctx.clearRect(0, 0, WIDTH, HEIGHT)
     playingField.draw()
+    if(game.winner === -1) {
+      player1.game = game
+      player2.game = game
+    }
     player1.draw()
     player2.draw()
+    // Player one is in charge of collision detection. Sorry p2...
     const isPlayerOne = game.players[0].userId === currentUser._id || false
     game.fallingStuff.map((f) => {
       const fs = new FallingStuff(ctx, f.createdAt, f.x, f.velocity, f.color)
       fs.draw()
-      // Player one is in charge of collision detection. Sorry p2...
-      if(isPlayerOne) {
-        if(game.pOnePos === fs.x && fs.hitZone) {
-          if(fs.color === '#ff0000' ){
+      if (isPlayerOne) {
+        if (game.pOnePos === fs.x && fs.hitZone) {
+          if (fs.color === '#ff0000') {
             player1.hit()
-          } else {
-            player1.grow()
+          }
+          if (fs.color === '#00ff00') {
+            player1.hit()
           }
         }
-        if(game.pTwoPos === fs.x && fs.hitZone) {
-          if(fs.color === '#ff0000' ){
+        if (game.pTwoPos === fs.x && fs.hitZone) {
+          if (fs.color === '#ff0000') {
             player2.hit()
-          } else {
-            player2.grow()
+          }
+          if (fs.color === '#00ff00') {
+            player2.hit()
           }
         }
       }
     })
-    if(player1.radius <= 4) {
+    if(game.pOneSize <= 4) {
       console.log('game over!')
       updateGame(game, { winner: 1 })
       return
     }
-    if(player2.radius <= 4) {
+    if(game.pTwoSize <= 4) {
       console.log('game over!')
       updateGame(game, { winner: 0 })
       return
@@ -142,9 +133,32 @@ class CanvasComponent extends Component {
     window.requestAnimationFrame(this.draw.bind(this))
   }
 
+  renderWinner() {
+    const { game } = this.props
+    const style = {
+      position: 'absolute',
+      display: 'flex',
+      justifyContent: 'center',
+      width: '800px',
+      height: '600px',
+      fontSize: 80,
+    }
+    if(!game) return null
+    if(game.winner < 0) return null
+    if(game.players.length !== 2) return null
+    return (
+      <div style={style}>
+        <h1 style={{textAlign: 'center'}}>{ game.players[game.winner].name.toUpperCase() } WINS!</h1>
+      </div>
+    )
+  }
+
   render() {
     return (
-      <canvas ref="canvas" width={WIDTH} height={HEIGHT}/>
+      <div>
+        { this.renderWinner() }
+        <canvas ref="canvas" width={WIDTH} height={HEIGHT}/>
+      </div>
     );
   }
 }
@@ -154,8 +168,9 @@ const mapStateToProps = (state) => {
     game: state.games.reduce((currentGame, nextGame) => {
       return nextGame._id === state.currentGame ? nextGame : currentGame
     }, {}),
+    currentGame: state.currentGame,
     currentUser: state.currentUser,
   }
 }
 
-export default connect(mapStateToProps, {updateGame})(CanvasComponent)
+export default connect(mapStateToProps, { updateGame })(CanvasComponent)
