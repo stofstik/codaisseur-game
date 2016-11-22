@@ -1,23 +1,34 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
-import setUpGames from '../actions/setup-games'
-import setGameId from '../actions/set-current-game'
 import Paper from 'material-ui/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import FlatButton from 'material-ui/FlatButton'
-import updateGame from '../actions/update-game'
-import CanvasComponent from '../components/CanvasComponent'
+import { createGame, updateGame } from '../actions/local-game'
+import LocalCanvas from '../components/LocalCanvas'
 import './Game.sass'
 
 class LocalGame extends Component {
-  componentWillMount() {
+
+  countDown(){
+    window.setTimeout(() => {
+      const { game, updateGame } = this.props
+      updateGame(game, {
+        startsIn: game.startsIn - 1
+      })
+      if(game.startsIn === 1) return
+      return this.countDown()
+    }, 1000)
   }
 
-  componentDidUpdate() {
+  componentDidMount() {
+    const { createGame } = this.props
+    createGame()
+    this.countDown()
   }
 
   render() {
+    const { game } = this.props
     if(game.startsIn === 0) {
       return (
         <div className="game">
@@ -26,7 +37,7 @@ class LocalGame extends Component {
             <span>Player 2</span>
           </div>
           <Paper style={{width: 800, height: 600, margin: 0}} zDepth={2}>
-            <CanvasComponent />
+            <LocalCanvas />
           </Paper>
         </div>
       )
@@ -48,5 +59,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, { setUpGames, setGameId, updateGame })(LocalGame)
-
+export default connect(mapStateToProps, { createGame, updateGame })(LocalGame)
