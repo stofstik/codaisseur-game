@@ -1,7 +1,7 @@
 # Falling Objects Game
 ### Work in progress!
 
-Green objects grow the player
+Green objects grow the player  
 Red objects shrink the player
 
 Play local or play multiplayer through socket-io! : )
