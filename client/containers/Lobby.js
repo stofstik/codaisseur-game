@@ -21,7 +21,9 @@ class Lobby extends Component {
       <div className="lobby">
         <div style={{width: 450, display: 'flex', justifyContent: 'space-between'}}>
           <RaisedButton label="omg teh lagz!" primary={ true } onClick={ createGame } />
-          <RaisedButton label="No lag plx : )" primary={ true } onClick={ createGame } />
+          <Link to="/game/local-game">
+            <RaisedButton label="No lag plx : )" primary={ true } />
+          </Link>
         </div>
         <List>
           { games.map((game) => {
