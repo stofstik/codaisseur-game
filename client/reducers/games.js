@@ -11,6 +11,9 @@ export default (state = [], { type, payload } = {}) => {
         return game._id === payload._id ? payload : game
       })
 
+    case 'GAME_REMOVED' :
+      return state.filter((game) => (game._id !== payload._id))
+
     default :
       return state
   }

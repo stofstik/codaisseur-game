@@ -7,6 +7,7 @@ import {List, ListItem} from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import setUpGames from '../actions/setup-games'
 import createGame from '../actions/create-game'
+import deleteGame from '../actions/delete-game'
 
 class Lobby extends Component {
   componentDidMount() {
@@ -14,22 +15,28 @@ class Lobby extends Component {
   }
 
   render() {
-    const { games, signedIn, createGame } = this.props
+    const { games, signedIn, createGame, deleteGame, currentUser } = this.props
 
     return (
       <div className="lobby">
-        <RaisedButton label="Create Game" primary={ true } onClick={ createGame } />
+        <div style={{width: 450, display: 'flex', justifyContent: 'space-between'}}>
+          <RaisedButton label="omg teh lagz!" primary={ true } onClick={ createGame } />
+          <RaisedButton label="No lag plx : )" primary={ true } onClick={ createGame } />
+        </div>
         <List>
           { games.map((game) => {
             return <ListItem key={ game._id }
               primaryText={ `${ game.createdBy.name }'s Game` }
-              style={{width: 400}}
+              style={{width: 450}}
               leftAvatar={<Avatar src={ game.createdBy.avatar }/> }
               rightIcon={
-                <Link style={{marginRight: 80, marginTop: 7}} to={ `/game/${game._id}` }>
-                  <RaisedButton label="Join" />
-                </Link>
-              } />
+                <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 7}} >
+                  <Link to={ `/game/${game._id}` }>
+                    <RaisedButton label="Join" />
+                  </Link>
+                  { game.createdBy._id === currentUser._id ? <RaisedButton label="Delete" style={{marginLeft: 8}} onClick={ deleteGame.bind(this, game) }/> : null }
+                </div>
+              }/>
           })}
         </List>
       </div>
@@ -44,7 +51,8 @@ Lobby.propTypes = {
 const mapStateToProps = (state) => {
   return {
     games: state.games,
+    currentUser: state.currentUser,
   }
 }
 
-export default connect(mapStateToProps, { setUpGames, createGame })(Lobby)
+export default connect(mapStateToProps, { setUpGames, createGame, deleteGame })(Lobby)
