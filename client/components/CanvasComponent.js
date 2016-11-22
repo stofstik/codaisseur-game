@@ -149,6 +149,9 @@ class CanvasComponent extends Component {
       <div>
         { this.renderWinner() }
         <canvas ref="canvas" width={WIDTH} height={HEIGHT}/>
+        <div style={{marginTop: 8, fontWeight: 'bold', fontSize: 20, display: 'flex', justifyContent: 'center'}}>
+          <span>Play with: A-D</span>
+        </div>
       </div>
     );
   }
